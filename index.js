@@ -90,7 +90,7 @@ function popArray(){
     if (resultRef.innerText.length > 1){
       operationArray[operationArray.length - 1] = Number(resultRef.innerText.slice(0, resultRef.innerText.length - 1)); 
     }
-    else if (resultRef.innerHTML.length === 1){
+    else if (resultRef.innerText.length === 1){
       operationArray.pop();
     }
   }
