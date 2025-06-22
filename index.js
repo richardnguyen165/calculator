@@ -44,15 +44,16 @@ decimalRef.addEventListener('click', () => addDecimalToResult());
 function addDecimalToResult(){
   if (operationArray.length === 0 || operationArray === 2){
     resultRef.innerText += `0.`;
-    operationArray.push(Number(resultRef.innerText));
+    operationArray.push(resultRef.innerText);
   }
   else{
     if (!(resultRef.innerText.includes('.'))){
       resultRef.innerText += `.`;
-      operationArray[operationArray.length - 1] = (Number(resultRef.innerText));
+      operationArray[operationArray.length - 1] = resultRef.innerText;
     }
   }
 }
+
 function addNumberToResult(number){
   // Deals with [78, +, 3] => press add => [81, +] => add another number
   if (signAdded){
@@ -61,10 +62,10 @@ function addNumberToResult(number){
   }
   resultRef.innerText += `${number}`;
   if (operationArray.length === 0 || operationArray.length === 2){
-    operationArray.push(Number(resultRef.innerText));
+    operationArray.push(resultRef.innerText);
   }
   else if (operationArray.length === 1 || operationArray.length === 3){
-    operationArray[operationArray.length - 1] = Number(resultRef.innerText);
+    operationArray[operationArray.length - 1] = resultRef.innerText;
   }
   console.log(operationArray);
 }
@@ -88,7 +89,7 @@ function changeCurrentSign(newSign){
 function popArray(){
   if (operationArray.length === 1 || operationArray.length === 3){
     if (resultRef.innerText.length > 1){
-      operationArray[operationArray.length - 1] = Number(resultRef.innerText.slice(0, resultRef.innerText.length - 1)); 
+      operationArray[operationArray.length - 1] = resultRef.innerText.slice(0, resultRef.innerText.length - 1); 
     }
     else if (resultRef.innerText.length === 1){
       operationArray.pop();
@@ -108,17 +109,19 @@ function computeAnswer(){
   }
   else if (operationArray.length === 3){
     let result;
+    let firstNumber = Number(operationArray[0]);
+    let secondNumber = Number(operationArray[2]);
     if (operationArray[1]  === '+'){
-      result = add(operationArray[0], operationArray[2]);
+      result = add(firstNumber, secondNumber);
     }
     else if (operationArray[1] === "x"){
-      result = multiply(operationArray[0], operationArray[2]);
+      result = multiply(firstNumber, secondNumber);
     }
     else if (operationArray[1] === "/"){
-      result = divide(operationArray[0], operationArray[2]);
+      result = divide(firstNumber, secondNumber);
     }
     else{
-      result = subtract(operationArray[0], operationArray[2]);
+      result = subtract(firstNumber, secondNumber);
     }
     if (result !== NaN){
       clearArray();
