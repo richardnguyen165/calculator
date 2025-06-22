@@ -1,0 +1,20 @@
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.first-row{
+  display: flex;
+  justify-content: end;
+}
+
+button{
+  cursor: pointer;
+}
