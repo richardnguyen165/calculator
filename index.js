@@ -20,6 +20,7 @@ const divideRef = document.querySelector('.divide');
 const equalRef = document.querySelector('.equal');
 const deleteRef = document.querySelector('.delete');
 const allClearRef = document.querySelector('.all-clear');
+const decimalRef = document.querySelector('.decimal');
 
 oneButtonRef.addEventListener('click', () => addNumberToResult('1'));
 twoButtonRef.addEventListener('click', () =>  addNumberToResult('2'));
@@ -38,7 +39,20 @@ divideRef.addEventListener('click',  () => changeCurrentSign('/'));
 equalRef.addEventListener('click',  () => computeAnswer());
 deleteRef.addEventListener('click', () => popArray());
 allClearRef.addEventListener('click', () => clearArray());
+decimalRef.addEventListener('click', () => addDecimalToResult());
 
+function addDecimalToResult(){
+  if (operationArray.length === 0 || operationArray === 2){
+    resultRef.innerText += `0.`;
+    operationArray.push(Number(resultRef.innerText));
+  }
+  else{
+    if (!(resultRef.innerText.includes('.'))){
+      resultRef.innerText += `.`;
+      operationArray[operationArray.length - 1] = (Number(resultRef.innerText));
+    }
+  }
+}
 function addNumberToResult(number){
   // Deals with [78, +, 3] => press add => [81, +] => add another number
   if (signAdded){
@@ -72,9 +86,15 @@ function changeCurrentSign(newSign){
 }
 
 function popArray(){
-  if ((operationArray.length === 1 || operationArray.length === 3) && resultRef.innerText.length > 0){
-    operationArray[operationArray.length - 1] = Number(resultRef.innerText.slice(0, resultRef.innerText.length - 1));
+  if (operationArray.length === 1 || operationArray.length === 3){
+    if (resultRef.innerText.length > 1){
+      operationArray[operationArray.length - 1] = Number(resultRef.innerText.slice(0, resultRef.innerText.length - 1)); 
+    }
+    else if (resultRef.innerHTML.length === 1){
+      operationArray.pop();
+    }
   }
+
 }
 
 function clearArray(){
@@ -103,7 +123,7 @@ function computeAnswer(){
     if (result !== NaN){
       clearArray();
       operationArray.push(result);
-      resultRef.innerText = `${result}`;
+      resultRef.innerText = `${result.toFixed(3)}`;
     }
   }
   console.log(operationArray);
