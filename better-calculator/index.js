@@ -153,8 +153,6 @@ function calculateSign(currentCalculation, previousNumber, previousSign){
 // my initial solution would work, but is hard to maintain and understand, causing me to switch over
 function computeAnswer(beginningIndex = 0){
 
-  console.log(operationArray);
-
   let currentCalculation = [];
   let previousSign = "";
   let previousNumber = null;
@@ -171,6 +169,10 @@ function computeAnswer(beginningIndex = 0){
     }
     else{
       if (currentElement === "("){
+        // (12)(2)
+        if (operationArray[index - 1] === ")"){
+          previousSign = "x";
+        }
         const bracketResult = computeAnswer(index + 1);
         index = bracketResult[0];
         currentCalculation.push(bracketResult[1]);
@@ -187,7 +189,6 @@ function computeAnswer(beginningIndex = 0){
   if (previousSign){
     currentCalculation = calculateSign(currentCalculation, previousNumber, previousSign);
   }
-  console.log(currentCalculation[0]);
   return currentCalculation[0];
 }
 
