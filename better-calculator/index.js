@@ -69,7 +69,7 @@ function changeCurrentSign(newSign){
 }
 
 function addDecimalToResult(){
-  if (ALLSIGNS.includes(operationArray.at(-1))){
+  if (ALLSIGNS.includes(operationArray.at(-1) || BRACKETS.includes(operationArray.at(-1)))){
     resultRef.innerText += `0.`;
     operationArray.push(`0.`);
   }
@@ -85,7 +85,7 @@ function addNumberToResult(number){
     signAdded = false;
   }
   resultRef.innerText += `${number}`;
-  if (ALLSIGNS.includes(operationArray.at(-1)) || operationArray.length === 0){
+  if (ALLSIGNS.includes(operationArray.at(-1)) || operationArray.length === 0 || BRACKETS.includes(operationArray.at(-1))){
     operationArray.push(number);
   }
   else{
@@ -117,7 +117,7 @@ function checkForBalancedBrackets(){
       testStack.push(currentCharacter);
     }
     else{
-      let poppedCharacter = currentCharacter.pop();
+      let poppedCharacter = testStack.pop();
       if (!poppedCharacter || poppedCharacter === currentCharacter){
         alert('Unbalanced brackets!');
         return; 
@@ -131,105 +131,64 @@ function checkForBalancedBrackets(){
   computeAnswer();
 }
 
-function trickleDownAddAndSub(currentCalculation){
-  let newCalculation = [];
-  let newSign = "";
-  for (let i = 0; i < currentCalculation.length; i++){
-    let newCharacter = currentCalculation[i];
-    if (ALLSIGNS.includes(newCharacter)){
-      newSign = newCharacter;
-    }
-    else{
-      newCalculation.push(Number(newCharacter));
-      if (newCalculation.length === 2){
-        let result;
-        if (newSign === "+"){
-          result = add(newCalculation[0], newCalculation[1]);
-        }
-        else{
-          result = subtract(newCalculation[0], newCalculation[1]);
-        }
-        newCalculation = [];
-        newCalculation.push(result);
-      }
-    }
+function calculateSign(currentCalculation, previousNumber, previousSign){
+  if (!previousSign || previousSign === "+"){
+    currentCalculation.push(previousNumber);
   }
-  console.log(newCalculation);
-  return newCalculation;
+  else if (previousSign === "-"){
+    currentCalculation.push(-previousNumber);
+  }
+  else if (previousSign === "x"){
+    let firstNumber = currentCalculation.pop();
+    currentCalculation.push(firstNumber * previousNumber);
+  }
+  else if (previousSign === "/"){
+    let firstNumber = currentCalculation.pop();
+    currentCalculation.push(firstNumber / previousNumber);
+  }
+  return currentCalculation;
 }
 
+// used my previous soluton from leetcode
+// my initial solution would work, but is hard to maintain and understand, causing me to switch over
 function computeAnswer(beginningIndex = 0){
+
   console.log(operationArray);
+
   let currentCalculation = [];
   let previousSign = "";
-  let index = 0;
+  let previousNumber = null;
+  let index = beginningIndex;
+
   while (index < operationArray.length){
     let currentElement = operationArray[index];
     if (!isNaN(currentElement)){
-      currentCalculation.push(Number(currentElement));
+      previousNumber = Number(currentElement);
     }
     else if (ALLSIGNS.includes(currentElement)){
-      // add and subtract
-      if (ALLSIGNS.indexOf(currentElement) < 2){
-        // 6 + 6 + -> means you can add 6 + 6
-        if (ALLSIGNS.indexOf(previousSign) < 2 && previousSign){
-          currentCalculation = trickleDownAddAndSub(currentCalculation);
-        }
-        currentCalculation.push(currentElement);
-      }
-      // multiply and divide
-      else{
-        index++;
-        let nextNumber = Number(operationArray.at(index));
-        if (nextNumber === NaN){
-          alert('Incomplete expression!');
-          return;
-        }
-        // Implement multiplication or division
-        if (currentElement === "x"){
-          currentCalculation.push(multiply(currentCalculation.pop(), nextNumber));
-        }
-        else{
-          currentCalculation.push(divide(currentCalculation.pop(), nextNumber));
-        }
-        //
-        if (ALLSIGNS.indexOf(previousSign) < 2 && previousSign){
-          currentCalculation = trickleDownAddAndSub(currentCalculation);
-        }
-      }
+      currentCalculation = calculateSign(currentCalculation, previousNumber, previousSign);
       previousSign = currentElement;
     }
     else{
-      continue; // brackets implementation
+      if (currentElement === "("){
+        const bracketResult = computeAnswer(index + 1);
+        index = bracketResult[0];
+        currentCalculation.push(bracketResult[1]);
+      }
+      else if (currentElement === ")"){
+        if (previousSign){
+          currentCalculation = calculateSign(currentCalculation, previousNumber, previousSign);
+        }
+        return [index, currentCalculation[0]];
+      }
     }
     index++;
   }
-  if (ALLSIGNS.includes(operationArray.at(-1))){
-    alert('Incomplete expression!');
-    return;
+  if (previousSign){
+    currentCalculation = calculateSign(currentCalculation, previousNumber, previousSign);
   }
-  console.log(currentCalculation);
-}
-
-function multiply(firstNumber, secondNumber){
-  return firstNumber * secondNumber;
-}
-
-function subtract(firstNumber, secondNumber){
-  return firstNumber - secondNumber;
-}
-
-function add(firstNumber, secondNumber){
-  return firstNumber + secondNumber;
-}
-
-function divide(firstNumber, secondNumber){
-  if (secondNumber === 0){
-    alert('Cannot divide by 0.');
-    operationArray.pop();
-    return NaN;
-  }
-  return firstNumber / secondNumber;
+  console.log(currentCalculation[0]);
+  return currentCalculation[0];
 }
 
 eventListeners();
