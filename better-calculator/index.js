@@ -27,6 +27,7 @@ const allClearRef = document.querySelector('.all-clear');
 const decimalRef = document.querySelector('.decimal');
 const openBracketRef = document.querySelector('.opening-bracket');
 const closeBracketRef = document.querySelector('.closing-bracket');
+const exponentRef = document.querySelector('.exponent');
 
 function eventListeners(){
   zeroButtonRef.addEventListener('click', () => addNumberToResult('0'));
@@ -49,6 +50,7 @@ function eventListeners(){
   openBracketRef.addEventListener('click', () => addBrackets('('));
   closeBracketRef.addEventListener('click', () => addBrackets(')'));
   equalRef.addEventListener('click', () => checkForBalancedBrackets());
+  exponentRef.addEventListener('click', () => addExponentToResult());
 }
 
 function addBrackets(bracket){
@@ -85,10 +87,13 @@ function addNumberToResult(number){
 }
 
 function addExponentToResult(){
+  console.log(operationArray, !isNaN(operationArray.at(-1)));
   if (operationArray.at(-1) === ')' || !isNaN(operationArray.at(-1))){
     operationArray.push('^(');
     bracketStack.push('(');
+    resultRef.value += '^(';
   }
+  console.log(operationArray);
 }
 
 function changeCurrentSign(newSign){
@@ -102,7 +107,6 @@ function changeCurrentSign(newSign){
   operationArray.push(newSign);
 }
 
-
 function clearArray(){
   operationArray = [];
   resultRef.value = '';
@@ -111,6 +115,12 @@ function clearArray(){
 function popArray(){
   if (BRACKETS.includes(operationArray.at(-1)) || EXPONENT.includes(operationArray.at(-1))){
     bracketStack.pop();
+    if (EXPONENT.includes(operationArray.at(-1))){
+      resultRef.value = resultRef.value.slice(0, resultRef.value.length - 2);
+    }
+    else{
+      resultRef.value = resultRef.value.slice(0, resultRef.value.length - 1);
+    }
     operationArray.pop();
   }
   else{
@@ -186,13 +196,15 @@ function computeAnswer(beginningIndex = 0){
     }
     if (BRACKETS.includes(currentElement)){
       if (currentElement === "("){
-        // (12)(2) or 12(2)
-        if (operationArray[index - 1] === ")" || !isNaN(operationArray[index - 1])){
-          previousSign = "x";
-        }
         const bracketResult = computeAnswer(index + 1);
         index = bracketResult[0];
         previousNumber = bracketResult[1];
+        // (6)^(6)
+        if (index + 1 < operationArray.length && EXPONENT.includes(operationArray[index + 1])){
+          const bracketResult = computeAnswer(index + 2);
+          index = bracketResult[0];
+          previousNumber = previousNumber ** bracketResult[1];
+        }
       }
       else if (currentElement === ")"){
         let finalSum;
@@ -203,7 +215,6 @@ function computeAnswer(beginningIndex = 0){
         else{
           finalSum = previousNumber;
         }
-        console.log(index, finalSum);
         return [index, finalSum];
       }
     }
