@@ -43,13 +43,13 @@ decimalRef.addEventListener('click', () => addDecimalToResult());
 
 function addDecimalToResult(){
   if (operationArray.length === 0 || operationArray === 2){
-    resultRef.innerText += `0.`;
-    operationArray.push(resultRef.innerText);
+    resultRef.value += `0.`;
+    operationArray.push(resultRef.value);
   }
   else{
-    if (!(resultRef.innerText.includes('.'))){
-      resultRef.innerText += `.`;
-      operationArray[operationArray.length - 1] = resultRef.innerText;
+    if (!(resultRef.value.includes('.'))){
+      resultRef.value += `.`;
+      operationArray[operationArray.length - 1] = resultRef.value;
     }
   }
 }
@@ -57,15 +57,15 @@ function addDecimalToResult(){
 function addNumberToResult(number){
   // Deals with [78, +, 3] => press add => [81, +] => add another number
   if (signAdded){
-    resultRef.innerText = ``;
+    resultRef.value = ``;
     signAdded = false;
   }
-  resultRef.innerText += `${number}`;
+  resultRef.value += `${number}`;
   if (operationArray.length === 0 || operationArray.length === 2){
-    operationArray.push(resultRef.innerText);
+    operationArray.push(resultRef.value);
   }
   else if (operationArray.length === 1 || operationArray.length === 3){
-    operationArray[operationArray.length - 1] = resultRef.innerText;
+    operationArray[operationArray.length - 1] = resultRef.value;
   }
   console.log(operationArray);
 }
@@ -73,7 +73,7 @@ function addNumberToResult(number){
 function changeCurrentSign(newSign){
   // Clears result if an operator is added.
   if (operationArray.length === 1){
-    resultRef.innerText = ``;
+    resultRef.value = ``;
   }
   // Changes operator
   else if (operationArray.length === 2){
@@ -88,10 +88,10 @@ function changeCurrentSign(newSign){
 
 function popArray(){
   if (operationArray.length === 1 || operationArray.length === 3){
-    if (resultRef.innerText.length > 1){
-      operationArray[operationArray.length - 1] = resultRef.innerText.slice(0, resultRef.innerText.length - 1); 
+    if (resultRef.value.length > 1){
+      operationArray[operationArray.length - 1] = resultRef.value.slice(0, resultRef.value.length - 1); 
     }
-    else if (resultRef.innerText.length === 1){
+    else if (resultRef.value.length === 1){
       operationArray.pop();
     }
   }
@@ -99,7 +99,7 @@ function popArray(){
 
 function clearArray(){
   operationArray = [];
-  resultRef.innerText = '';
+  resultRef.value = '';
 }
 
 function computeAnswer(){
@@ -125,7 +125,12 @@ function computeAnswer(){
     if (result !== NaN){
       clearArray();
       operationArray.push(result);
-      resultRef.innerText = `${result.toFixed(3)}`;
+      if (result % 1 !== 0){
+        resultRef.value = `${result.toFixed(3)}`;
+      }
+      else{
+        resultRef.value = `${result}`;
+      }
     }
   }
   console.log(operationArray);

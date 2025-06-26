@@ -8,7 +8,38 @@ body{
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: "Roboto", sans-serif;
 }
+.calculator-container{
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(168, 218, 209);
+  gap: 20px;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.result{
+  font-size: 20px;
+  height: 50px;
+  padding-left: 10px;
+  background-color: lightgrey;
+  border: solid;
+  border-radius: 20px;
+  overflow-x: scroll; 
+  overflow-y: hidden; 
+}
+
+button{
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  border: solid;
+  font-size: 20px;
+  font-weight: bold;
+}
+
 
 .first-row{
   display: flex;
@@ -19,8 +50,3 @@ button{
   cursor: pointer;
 }
 
-
-.result{
-  overflow-x: scroll; 
-  overflow-y: hidden; 
-}

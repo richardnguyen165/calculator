@@ -93,7 +93,6 @@ function addExponentToResult(){
     bracketStack.push('(');
     resultRef.value += '^(';
   }
-  console.log(operationArray);
 }
 
 function changeCurrentSign(newSign){
@@ -231,7 +230,12 @@ function computeAnswer(beginningIndex = 0){
     previousSign = "-";
     operationArray.push('-');
   }
-  operationArray.push(`${Math.abs(finalSum)}`);
+  if (finalSum % 1 !== 0){
+    operationArray.push(`${Math.abs(finalSum.toFixed(3))}`);
+  }
+  else{
+    operationArray.push(`${Math.abs(finalSum)}`);
+  }
 }
 
 eventListeners();
