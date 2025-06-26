@@ -3,92 +3,110 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculator</title>
+  <title>Advanced Calculator</title>
   <link rel="stylesheet" href = "./index.css">
+  <link rel="stylesheet" href = "../header.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div class = "header">
+    <div class = "links">
+      <a href = "../index.html">
+        Quick Calculator
+      </a>
+      <a href = "./index.html">
+        Advanced Calculator
+      </a>
+    </div>
+  </div>
+  <div>
+    <ul>
+      <h3>Note:</h3>
+      <li>Cannot adapt to number and bracket multiplication without multiplication operator. (Eg. 2(6))</li>
+      <li>Cannot adapt to bracket-to-bracket multiplication without multiplication operator. (Eg. (2)(6))</li>
+    </ul>
+  </div>
   <div class = "calculator-container">
     <input readonly class = "result"></input>
     <div class = "first-row each-row">
-      <button class = "opening-bracket">
+      <button class = "opening-bracket calc">
         (
       </button>
-      <button class  = "closing-bracket">
+      <button class  = "closing-bracket calc">
         )
       </button>
-      <button class = "all-clear">
+      <button class = "all-clear calc">
         AC
       </button>
-      <button class = "delete">
+      <button class = "delete calc">
         DEL
       </button>
     </div>
 
     <div class = "second-row each-row">
-      <button class = "seven">
+      <button class = "seven calc">
         7
       </button>
-      <button class = "eight">
+      <button class = "eight calc">
         8
       </button>
-      <button class = "nine">
+      <button class = "nine calc">
         9
       </button>
-      <button class = "divide">
+      <button class = "divide calc">
         /
       </button>
     </div>
 
     <div class = "third-row each-row">
-      <button class = "four">
+      <button class = "four calc">
         4
       </button>
-      <button class = "five">
+      <button class = "five calc">
         5
       </button>
-      <button class = "six">
+      <button class = "six calc">
         6
       </button>
-      <button class = "multiply">
+      <button class = "multiply calc">
         x
       </button>
     </div>
 
     <div class = "fourth-row each-row">
-      <button class = "one">
+      <button class = "one calc">
         1
       </button>
-      <button class = "two">
+      <button class = "two calc">
         2
       </button>
-      <button class = "three">
+      <button class = "three calc">
         3
       </button>
-      <button class = "minus">
+      <button class = "minus calc">
         -
       </button>
     </div>
 
     <div class = "fifth-row each-row">
-      <button class = "decimal">
+      <button class = "decimal calc">
         .
       </button>
-      <button class = "zero">
+      <button class = "zero calc">
         0
       </button>
-      <button class = "plus">
+      <button class = "plus calc">
         +
       </button>
-      <button class = "exponent">
+      <button class = "exponent calc">
         ^
       </button>
     </div>
 
     <div class = "sixth-row each-row">
-      <button class = "equal">
+      <button class = "equal calc">
         =
       </button>
     </div>
