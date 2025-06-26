@@ -4,6 +4,8 @@ let bracketStack = [];
 
 ALLSIGNS = ['-', '+', '/', 'x'];
 BRACKETS = ['(', ')'];
+EXPONENT = ['^('];
+
 const resultRef = document.querySelector('.result');
 const oneButtonRef = document.querySelector('.one');
 const twoButtonRef = document.querySelector('.two');
@@ -53,39 +55,28 @@ function addBrackets(bracket){
   if (!(operationArray.at(-1) === '(' &&  bracket === ')')){
     operationArray.push(bracket);
     bracketStack.push(bracket);
-    resultRef.innerText += `${bracket}`;
+    resultRef.value += `${bracket}`;
   }
-}
-
-function changeCurrentSign(newSign){
-  if (!(ALLSIGNS.includes(operationArray.at(-1)))){
-    resultRef.innerText += `${newSign}`;
-  }
-  else if (ALLSIGNS.includes(operationArray.at(-1))){
-    operationArray.pop();
-    resultRef.innerText = resultRef.innerText.slice(0, resultRef.innerText.length - 1) + newSign;
-  }
-  operationArray.push(newSign);
 }
 
 function addDecimalToResult(){
-  if (ALLSIGNS.includes(operationArray.at(-1) || BRACKETS.includes(operationArray.at(-1)))){
-    resultRef.innerText += `0.`;
+  if (ALLSIGNS.includes(operationArray.at(-1)) || BRACKETS.includes(operationArray.at(-1)) || EXPONENT.includes(operationArray.at(-1))){
+    resultRef.value += `0.`;
     operationArray.push(`0.`);
   }
   else if (!(operationArray.at(-1).includes('.'))){
-      resultRef.innerText += `.`;
+      resultRef.value += `.`;
       operationArray[operationArray.length - 1] = operationArray[operationArray.length - 1] + '.';
   }
 }
 
 function addNumberToResult(number){
   if (signAdded){
-    resultRef.innerText = ``;
+    resultRef.value = ``;
     signAdded = false;
   }
-  resultRef.innerText += `${number}`;
-  if (ALLSIGNS.includes(operationArray.at(-1)) || operationArray.length === 0 || BRACKETS.includes(operationArray.at(-1))){
+  resultRef.value += `${number}`;
+  if (ALLSIGNS.includes(operationArray.at(-1)) || operationArray.length === 0 || BRACKETS.includes(operationArray.at(-1)) || EXPONENT.includes(operationArray.at(-1))){
     operationArray.push(number);
   }
   else{
@@ -93,20 +84,60 @@ function addNumberToResult(number){
   }
 }
 
+function addExponentToResult(){
+  if (operationArray.at(-1) === ')' || !isNaN(operationArray.at(-1))){
+    operationArray.push('^(');
+    bracketStack.push('(');
+  }
+}
+
+function changeCurrentSign(newSign){
+  if (!(ALLSIGNS.includes(operationArray.at(-1)))){
+    resultRef.value += `${newSign}`;
+  }
+  else if (ALLSIGNS.includes(operationArray.at(-1))){
+    operationArray.pop();
+    resultRef.value = resultRef.value.slice(0, resultRef.value.length - 1) + newSign;
+  }
+  operationArray.push(newSign);
+}
+
+
 function clearArray(){
   operationArray = [];
-  resultRef.innerText = '';
+  resultRef.value = '';
 }
 
 function popArray(){
-  if (BRACKETS.includes(operationArray.at(-1))){
+  if (BRACKETS.includes(operationArray.at(-1)) || EXPONENT.includes(operationArray.at(-1))){
     bracketStack.pop();
-  }
-  operationArray[operationArray.length - 1] = operationArray[operationArray.length - 1].slice(0, operationArray[operationArray.length - 1].length - 1);
-  resultRef.innerText = resultRef.innerText.slice(0, resultRef.innerText.length - 1);
-  if (operationArray.at(-1).length === 0){
     operationArray.pop();
   }
+  else{
+      operationArray[operationArray.length - 1] = operationArray[operationArray.length - 1].slice(0, operationArray[operationArray.length - 1].length - 1);
+      resultRef.value = resultRef.value.slice(0, resultRef.value.length - 1);
+      if (operationArray.at(-1).length === 0){
+        operationArray.pop();
+    }
+  }
+}
+
+function calculateSign(currentCalculation, previousNumber, previousSign){
+  if (!previousSign || previousSign === "+"){
+    currentCalculation.push(previousNumber);
+  }
+  else if (previousSign === "-"){
+    currentCalculation.push(-previousNumber);
+  }
+  else if (previousSign === "x"){
+    let firstNumber = currentCalculation.pop();
+    currentCalculation.push(firstNumber * previousNumber);
+  }
+  else if (previousSign === "/"){
+    let firstNumber = currentCalculation.pop();
+    currentCalculation.push(firstNumber / previousNumber);
+  }
+  return currentCalculation;
 }
 
 function checkForBalancedBrackets(){
@@ -128,25 +159,8 @@ function checkForBalancedBrackets(){
     alert('Unbalanced brackets!');
     return; 
   }
+  console.log(operationArray);
   computeAnswer();
-}
-
-function calculateSign(currentCalculation, previousNumber, previousSign){
-  if (!previousSign || previousSign === "+"){
-    currentCalculation.push(previousNumber);
-  }
-  else if (previousSign === "-"){
-    currentCalculation.push(-previousNumber);
-  }
-  else if (previousSign === "x"){
-    let firstNumber = currentCalculation.pop();
-    currentCalculation.push(firstNumber * previousNumber);
-  }
-  else if (previousSign === "/"){
-    let firstNumber = currentCalculation.pop();
-    currentCalculation.push(firstNumber / previousNumber);
-  }
-  return currentCalculation;
 }
 
 // used my previous soluton from leetcode
@@ -161,35 +175,52 @@ function computeAnswer(beginningIndex = 0){
   while (index < operationArray.length){
     let currentElement = operationArray[index];
     if (!isNaN(currentElement)){
+      console.log(currentElement);
       previousNumber = Number(currentElement);
+      if (index + 1 < operationArray.length && EXPONENT.includes(operationArray[index + 1])){
+        // you are checking the next symbol, and it's an exponent, so one more after that
+        const bracketResult = computeAnswer(index + 2);
+        index = bracketResult[0];
+        previousNumber = previousNumber ** bracketResult[1];
+      }
     }
-    else if (ALLSIGNS.includes(currentElement)){
-      currentCalculation = calculateSign(currentCalculation, previousNumber, previousSign);
-      previousSign = currentElement;
-    }
-    else{
+    if (BRACKETS.includes(currentElement)){
       if (currentElement === "("){
-        // (12)(2)
-        if (operationArray[index - 1] === ")"){
+        // (12)(2) or 12(2)
+        if (operationArray[index - 1] === ")" || !isNaN(operationArray[index - 1])){
           previousSign = "x";
         }
         const bracketResult = computeAnswer(index + 1);
         index = bracketResult[0];
-        currentCalculation.push(bracketResult[1]);
+        previousNumber = bracketResult[1];
       }
       else if (currentElement === ")"){
+        let finalSum;
         if (previousSign){
           currentCalculation = calculateSign(currentCalculation, previousNumber, previousSign);
+          finalSum = currentCalculation.reduce((accumulator, next) => accumulator + next, 0);
         }
-        return [index, currentCalculation[0]];
+        else{
+          finalSum = previousNumber;
+        }
+        console.log(index, finalSum);
+        return [index, finalSum];
       }
+    }
+    if (ALLSIGNS.includes(currentElement) || index === operationArray.length - 1){
+      currentCalculation = calculateSign(currentCalculation, previousNumber, previousSign);
+      previousSign = currentElement;
     }
     index++;
   }
-  if (previousSign){
-    currentCalculation = calculateSign(currentCalculation, previousNumber, previousSign);
+  operationArray = [];
+  const finalSum = currentCalculation.reduce((accumulator, next) => accumulator + next, 0);
+  resultRef.value = `${finalSum}`;
+  if (finalSum < 0){
+    previousSign = "-";
+    operationArray.push('-');
   }
-  return currentCalculation[0];
+  operationArray.push(`${Math.abs(finalSum)}`);
 }
 
 eventListeners();

@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculator</title>
   <link rel="stylesheet" href = "./index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class = "calculator-container">
-    <div class = "result-container">
-      <p class = "result"></p>
-    </div>
-    <div class = "first-row">
+    <input readonly class = "result"></input>
+    <div class = "first-row each-row">
       <button class = "opening-bracket">
         (
       </button>
@@ -26,7 +27,7 @@
       </button>
     </div>
 
-    <div class = "second-row">
+    <div class = "second-row each-row">
       <button class = "seven">
         7
       </button>
@@ -41,7 +42,7 @@
       </button>
     </div>
 
-    <div class = "third-row">
+    <div class = "third-row each-row">
       <button class = "four">
         4
       </button>
@@ -56,7 +57,7 @@
       </button>
     </div>
 
-    <div class = "fourth-row">
+    <div class = "fourth-row each-row">
       <button class = "one">
         1
       </button>
@@ -71,7 +72,7 @@
       </button>
     </div>
 
-    <div class = "fifth-row">
+    <div class = "fifth-row each-row">
       <button class = "decimal">
         .
       </button>
@@ -81,6 +82,12 @@
       <button class = "plus">
         +
       </button>
+      <button class = "exponent">
+        ^
+      </button>
+    </div>
+
+    <div class = "sixth-row each-row">
       <button class = "equal">
         =
       </button>
